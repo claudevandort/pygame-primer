@@ -81,6 +81,8 @@ class Cloud(pygame.sprite.Sprite):
 
 pygame.init()
 
+clock = pygame.time.Clock()
+
 screen = pygame.display.set_mode(SCREEN_SIZE)
 
 ADDENEMY = pygame.USEREVENT + 1
@@ -129,5 +131,6 @@ while running:
         player.kill()
         running = False
     pygame.display.flip()
+    clock.tick(30)
 
 pygame.quit()
