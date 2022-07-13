@@ -25,8 +25,10 @@ class Player(pygame.sprite.Sprite):
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
             self.rect.move_ip(0, -self.speed)
+            move_up_sound.play()
         if pressed_keys[K_DOWN]:
             self.rect.move_ip(0, self.speed)
+            move_down_sound.play()
         if pressed_keys[K_LEFT]:
             self.rect.move_ip(-self.speed, 0)
         if pressed_keys[K_RIGHT]:
@@ -79,10 +81,10 @@ class Cloud(pygame.sprite.Sprite):
             self.kill()
 
 
+pygame.mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
-
 screen = pygame.display.set_mode(SCREEN_SIZE)
 
 ADDENEMY = pygame.USEREVENT + 1
@@ -96,6 +98,17 @@ enemies = pygame.sprite.Group()
 clouds = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
+
+pygame.mixer.music.load("sound/Sky_dodge_theme.ogg")
+pygame.mixer.music.set_volume(0.25)
+pygame.mixer.music.play(loops=-1)
+
+move_up_sound = pygame.mixer.Sound("sound/Jet_up.ogg")
+move_up_sound.set_volume(0.1)
+move_down_sound = pygame.mixer.Sound("sound/Jet_down.ogg")
+move_down_sound.set_volume(0.1)
+collision_sound = pygame.mixer.Sound("sound/Boom.ogg")
+collision_sound.set_volume(0.5)
 
 '''
 Game Loop
@@ -129,8 +142,14 @@ while running:
         screen.blit(entity.surf, entity.rect)
     if pygame.sprite.spritecollideany(player, enemies):
         player.kill()
+        move_up_sound.stop()
+        move_down_sound.stop()
+        collision_sound.play()
+        pygame.time.delay(500)
         running = False
     pygame.display.flip()
     clock.tick(30)
 
+pygame.mixer.music.stop()
+pygame.mixer.quit()
 pygame.quit()
